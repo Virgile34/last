@@ -103,6 +103,24 @@ def generate_spiral2d(nspiral=1000,
 
 
 class LatentODEfunc(nn.Module):
+  """ 
+LatentODEfunc: 
+    This module defines the neural network architecture for the latent ODE function that learns the dynamics of the system. The forward function takes as input the time and the current state of the system, and outputs the derivative of the state with respect to time. The architecture consists of three fully connected layers with ELU activation function.
+
+    Parameters:
+        latent_dim (int): The dimension of the latent space.
+        nhidden (int): The number of hidden units in the neural network.
+
+    Attributes:
+        elu (nn.Module): The ELU activation function.
+        fc1 (nn.Linear): The first fully connected layer.
+        fc2 (nn.Linear): The second fully connected layer.
+        fc3 (nn.Linear): The third fully connected layer.
+        nfe (int): The number of function evaluations (i.e., forward passes) that have been performed.
+
+    Methods:
+        forward(t, x): Computes the derivative of the state with respect to time, given the time and the current state of the system.
+"""
 
     def __init__(self, latent_dim=4, nhidden=20):
         super(LatentODEfunc, self).__init__()
@@ -123,6 +141,24 @@ class LatentODEfunc(nn.Module):
 
 
 class RecognitionRNN(nn.Module):
+  """RecognitionRNN:
+    This module defines the neural network architecture for the recognition model that infers the latent state from the observed data. The forward function takes as input the observed data and the hidden state, and outputs the mean and variance of the posterior distribution over the latent state. The architecture consists of two fully connected layers with tanh activation function.
+
+    Parameters:
+        latent_dim (int): The dimension of the latent space.
+        obs_dim (int): The dimension of the observed data.
+        nhidden (int): The number of hidden units in the neural network.
+        nbatch (int): The batch size.
+
+    Attributes:
+        i2h (nn.Linear): The input-to-hidden layer.
+        h2o (nn.Linear): The hidden-to-output layer.
+        nhidden (int): The number of hidden units in the neural network.
+        nbatch (int): The batch size.
+
+    Methods:
+        forward(x, h): Computes the mean and variance of the posterior distribution over the latent state, given the observed data and the hidden state.
+        initHidden(): Initializes the hidden state with zeros."""
 
     def __init__(self, latent_dim=4, obs_dim=2, nhidden=25, nbatch=1):
         super(RecognitionRNN, self).__init__()
@@ -142,6 +178,29 @@ class RecognitionRNN(nn.Module):
 
 
 class Decoder(nn.Module):
+      """
+    A neural network decoder module.
+
+    Args:
+        latent_dim (int): The dimension of the latent space.
+        obs_dim (int): The dimension of the observation space.
+        nhidden (int): The number of hidden units in the fully-connected layers.
+
+    Attributes:
+        relu (nn.ReLU): The ReLU activation function.
+        fc1 (nn.Linear): The first fully-connected layer, mapping from the latent space to the hidden layer.
+        fc2 (nn.Linear): The second fully-connected layer, mapping from the hidden layer to the observation space.
+
+    Methods:
+        forward(z: torch.Tensor) -> torch.Tensor:
+            Performs the forward pass of the decoder network.
+
+            Args:
+                z (torch.Tensor): The input tensor of shape (batch_size, latent_dim).
+
+            Returns:
+                The output tensor of shape (batch_size, obs_dim).
+    """
 
     def __init__(self, latent_dim=4, obs_dim=2, nhidden=20):
         super(Decoder, self).__init__()
@@ -176,12 +235,35 @@ class RunningAverageMeter(object):
 
 
 def log_normal_pdf(x, mean, logvar):
+  """
+    Computes the log pdf of a normal distribution with mean `mean` and log variance `logvar` at the point `x`.
+
+    Args:
+        x (torch.Tensor): The point(s) at which to compute the log pdf. Should have shape (batch_size, dim).
+        mean (torch.Tensor): The mean of the normal distribution. Should have shape (batch_size, dim).
+        logvar (torch.Tensor): The log variance of the normal distribution. Should have shape (batch_size, dim).
+
+    Returns:
+        torch.Tensor: The log pdf of the normal distribution evaluated at `x`. Should have shape (batch_size,).
+    """
     const = torch.from_numpy(np.array([2. * np.pi])).float().to(x.device)
     const = torch.log(const)
     return -.5 * (const + logvar + (x - mean) ** 2. / torch.exp(logvar))
 
 
 def normal_kl(mu1, lv1, mu2, lv2):
+  """
+    Computes the KL divergence between two normal distributions with means `mu1` and `mu2` and log variances `lv1` and `lv2`.
+
+    Args:
+        mu1 (torch.Tensor): The mean of the first normal distribution. Should have shape (batch_size, dim).
+        lv1 (torch.Tensor): The log variance of the first normal distribution. Should have shape (batch_size, dim).
+        mu2 (torch.Tensor): The mean of the second normal distribution. Should have shape (batch_size, dim).
+        lv2 (torch.Tensor): The log variance of the second normal distribution. Should have shape (batch_size, dim).
+
+    Returns:
+        torch.Tensor: The KL divergence between the two normal distributions. Should have shape (batch_size,).
+    """
     v1 = torch.exp(lv1)
     v2 = torch.exp(lv2)
     lstd1 = lv1 / 2.
@@ -195,6 +277,17 @@ def normal_kl(mu1, lv1, mu2, lv2):
 
 
 def main_spiral_chen(): 
+      """Trains a Latent Ordinary Differential Equation model on a toy spiral dataset and visualizes the learned trajectory.
+
+    The model consists of a LatentODEfunc, RecognitionRNN, and Decoder. The training procedure involves
+    infering the initial distribution of the latent space by moving backwards in time through the RecognitionRNN,
+    and then moving forwards in time to learn a trajectory through the LatentODEfunc and Decoder. The loss is
+    calculated as the sum of the negative log-likelihood of the observations and the KL divergence between the approximate
+    posterior and the prior. 
+
+    Returns:
+    - None, but displays the learned trajectory and a plot of the loss during training using Streamlit.
+    """
     st.write("The training is quite long, please consider a coffee break ([4])")
 
     col1, col2, col3 = st.columns(3)
