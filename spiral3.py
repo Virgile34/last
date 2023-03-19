@@ -242,6 +242,20 @@ class ResNet(nn.Module):
 
 # Define training loop
 def train_model(model, train_data, val_data, optimizer, n_epochs=100):
+            """
+    Train a PyTorch model using the mean squared error (MSE) loss.
+
+    Args:
+    - model: a PyTorch model to train
+    - train_data: a PyTorch tensor representing the training data
+    - val_data: a PyTorch tensor representing the validation data
+    - optimizer: a PyTorch optimizer used to update the model's parameters
+    - n_epochs: an integer indicating the number of epochs to train the model for
+
+    Returns:
+    - train_loss_history: a list containing the training loss at each epoch
+    - val_loss_history: a list containing the validation loss at each epoch
+    """
     train_loss_history = []
     val_loss_history = []
 
