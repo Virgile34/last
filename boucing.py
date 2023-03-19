@@ -214,4 +214,4 @@ st.set_option('deprecation.showPyplotGlobalUse', False)
 
 
 if __name__ == "__main__":
-    app()
+    app_bouncing_ball()

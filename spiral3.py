@@ -118,8 +118,8 @@ def train_model(model, train_data, val_data, optimizer, n_epochs=100):
          val_loss = nn.MSELoss()(model(val_data), val_data).item()
          train_loss_history.append(train_loss)
          val_loss_history.append(val_loss)
-         with st.empty() :
-             st.write(f"Epoch {epoch}: Train Loss = {train_loss:.4f}, Val Loss = {val_loss:.4f}")
+         st.write(f"Epoch {epoch}: Train Loss = {train_loss:.4f}, Val Loss = {val_loss:.4f}")
+    st.empty()
 
 
     return train_loss_history, val_loss_history
@@ -196,7 +196,7 @@ def main_spirale():
 # Generate a new shape using the trained model
     st.sidebar.subheader("Generate a new shape using the trained model")
     # num_points = st.sidebar.slider("Number of points", 100, 1000, 500, 100)
-    num_points = 10000
+    num_points = 1000
     t = torch.linspace(0, 2 * np.pi, num_points)
     if model_type == "Neural ODE":
         xs = torch.zeros((num_points, 2))
