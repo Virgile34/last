@@ -22,10 +22,12 @@ def func_SIR():
 
 
 
-    st.markdown("## SIR model blabla")
-
+    st.markdown("# SIR model")
+    st.write("This app try to fit the evolution of a SIR model with a Neural ODE")
     # parameters for SIR data generation
     with st.expander("SIR data parameters") :
+
+        st.write("Where you can choose the parameters of the SIR model, as well as the number of evolution used for training")
         col_S0, col_I0, col_R0 = st.columns(3)
 
         S0 = col_S0.number_input("Susceptible", 0, 1000, 100, 1, format="%d")
@@ -59,6 +61,11 @@ def func_SIR():
     
     # parameters for the neural ODE param
     with st.expander("model parameters") :
+        st.markdown("Where you can choose the parameters for the model and the architecture uses for the latent ODE")
+        st.markdown("""Note that if all is selected, the model is fed with $x_{t_0}$ and predict $x_{t+1}, \ldots, x_{t_f}$  
+        Otherwise the model is fed with $x_{t}$ and predict $x_{t+step}$ for $t \in \{t_0, \ldots, t_{f-step}\}$
+                    """)
+
         col_latent_ODE_selec, col_step, col_by_all = st.columns([3, 1, 1])
         latent_ODE_selec = col_latent_ODE_selec.selectbox('latent ODE model', ['default', 'minimal', 'custom'])
         by_all = col_by_all.checkbox('all')
@@ -148,7 +155,7 @@ def func_SIR():
     else : 
         model  = st.session_state['model_SIR']
 
-    if st.button('train model'):
+    if st.button('Update model'):
         # update model with interactive inputs
         succes, model = get_model(params_dict)
         with st.empty() :
@@ -166,7 +173,7 @@ def func_SIR():
 
 
 
-    if st.button('Prediction'):
+    if st.button('Update prediction'):
     
 
 
@@ -194,6 +201,8 @@ def func_SIR():
     from .data_manager import available_models, _update_available
 
     _update_available()
+
+    st.write("Where are all the models saved on disk and there parameters :")
     st.dataframe(pd.DataFrame(available_models).T)
 
      
