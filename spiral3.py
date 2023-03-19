@@ -127,10 +127,10 @@ def train_model(model, train_data, val_data, optimizer, n_epochs=100):
 def main_spirale():
     st.title("Shape Fitting with Neural ODEs")
     st.write("This app generates shapes using Neural ODEs. Choose the shape, with the noise and (the best visualization of spiral comes with noise=0 and irregularities=0.1). You'll also have to count five to ten minutes to train the Neural ODEs.")
-    st.write("However, we included the code R.T.Q. Chen for a better generalisation of the fit.")
+    st.write("However, we included the code R.T.Q. Chen for a better generalisation of the fit (see sidebar).")
 # Generate a new shape
     st.sidebar.subheader("Generate a new shape")
-    shape_type = st.sidebar.selectbox("Select a shape type", ["Spiral","Big Spiral", "Circle", "Heart", "Spiral with varying curves"])
+    shape_type = st.sidebar.selectbox("Select a shape type", ["Spiral","Big Spiral", "Circle", "Heart", "Spiral with varying curves (not very stable)"])
     noise_level = st.sidebar.slider("Noise level", 0.0, 0.1, 0.0, 0.01)
     irregularity_level = st.sidebar.slider("Irregularity level", 0.0, 1.0, 0.1, 0.1)
     if shape_type == "Spiral":
