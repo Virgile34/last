@@ -109,17 +109,17 @@ def train_model(model, train_data, val_data, optimizer, n_epochs=100):
     train_loss_history = []
     val_loss_history = []
 
-    for epoch in range(n_epochs):
-         optimizer.zero_grad()
-         loss = nn.MSELoss()(model(train_data), train_data)
-         loss.backward()
-         optimizer.step()
-         train_loss = nn.MSELoss()(model(train_data), train_data).item()
-         val_loss = nn.MSELoss()(model(val_data), val_data).item()
-         train_loss_history.append(train_loss)
-         val_loss_history.append(val_loss)
-         st.write(f"Epoch {epoch}: Train Loss = {train_loss:.4f}, Val Loss = {val_loss:.4f}")
-    st.empty()
+    with st.empty() :
+        for epoch in range(n_epochs):
+            optimizer.zero_grad()
+            loss = nn.MSELoss()(model(train_data), train_data)
+            loss.backward()
+            optimizer.step()
+            train_loss = nn.MSELoss()(model(train_data), train_data).item()
+            val_loss = nn.MSELoss()(model(val_data), val_data).item()
+            train_loss_history.append(train_loss)
+            val_loss_history.append(val_loss)
+            st.write(f"Epoch {epoch}: Train Loss = {train_loss:.4f}, Val Loss = {val_loss:.4f}")
 
 
     return train_loss_history, val_loss_history
