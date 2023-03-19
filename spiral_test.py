@@ -288,7 +288,7 @@ def main_spiral_chen():
     Returns:
     - None, but displays the learned trajectory and a plot of the loss during training using Streamlit.
     """
-    st.write("The training is quite long, please consider a coffee break ([4])")
+    st.write("The training is quite long, please consider a coffee break ([4]). We also added some docstrings on the original code.")
 
     col1, col2, col3 = st.columns(3)
     adjoint = col1.checkbox('use adjoint', True)
