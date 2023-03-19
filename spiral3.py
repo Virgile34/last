@@ -275,6 +275,18 @@ def train_model(model, train_data, val_data, optimizer, n_epochs=100):
     return train_loss_history, val_loss_history
 
 def main_spirale():
+    """The main_spirale() function is a Streamlit app that generates shapes using Neural ODEs. 
+    The app allows the user to select a shape type and customize the noise and irregularity levels. 
+    The user can also choose to train a model on the generated shape using either a Neural ODE or ResNet model or compare the two.
+    Finally, the app generates a new shape using the trained model.
+    The function takes no arguments and returns nothing, as it is designed to run as a Streamlit app. 
+
+- Generate a new shape: This section allows the user to select a shape type, noise level, and irregularity level. The shape type can be Spiral, Big Spiral, Circle, Heart, or Spiral with varying curves. Once the user has made their selection, the app generates a shape and displays it on a scatter plot.
+- Train a model on the generated shape: This section allows the user to select a model type and learning rate. The user can choose to train either a Neural ODE or ResNet model or compare the two. The app then trains the selected model on the generated shape and displays the train and validation losses on a plot.
+- Generate a new shape using the trained model: This section generates a new shape using the trained model. The user can choose the number of points in the new shape. The app then generates the new shape and displays it on a scatter plot along with the original shape for comparison.
+
+Note that the app relies on several helper functions, including generate_spiral(), generate_circle(), generate_heart(), ODE(), ResNet(), train_model().
+    """
     st.title("Shape Fitting with Neural ODEs")
     st.write("This app generates shapes using Neural ODEs. Choose the shape, with the noise and (the best visualization of spiral comes with noise=0 and irregularities=0.1). You'll also have to count five to ten minutes to train the Neural ODEs.")
     st.write("However, we included the code R.T.Q. Chen for a better generalisation of the fit (see sidebar).")
