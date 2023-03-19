@@ -12,6 +12,18 @@ import numpy as np
 
 @st.cache_data
 def generate_spiral(n_samples=10000, noise=0.1, irregularity=0.05, circles=3):
+        """
+    Generates a 2D spiral dataset.
+
+    Args:
+        n_samples (int): The number of samples to generate (default: 10000).
+        noise (float): The amount of noise to add to the spiral (default: 0.1).
+        irregularity (float): The amount of irregularity to add to the spiral (default: 0.05).
+        circles (int): The number of circles to generate (default: 3).
+
+    Returns:
+        torch.Tensor: A tensor of shape (n_samples, 2) containing the 2D spiral dataset.
+    """
     t = torch.linspace(0, 2 * math.pi * circles, n_samples)
     r = torch.linspace(0, 1, n_samples) + noise * torch.randn(n_samples)
     angle = t + irregularity * torch.randn(n_samples)
@@ -35,6 +47,16 @@ def generate_spiral3(n_samples=1000, noise=0.1, irregularity=0.05, circles=10):
 
 @st.cache_data
 def generate_circle(n_samples=1000, noise=0):
+            """
+    Generates a 2D circle dataset.
+
+    Args:
+        n_samples (int): The number of samples to generate (default: 1000).
+        noise (float): The amount of noise to add to the spiral (default: 0).
+
+    Returns:
+        torch.Tensor: A tensor of shape (n_samples, 2) containing the 2D circle dataset.
+    """
     t = torch.linspace(0, 2 * math.pi, n_samples)
     x = torch.stack([torch.cos(t), torch.sin(t)], dim=1)
     x += noise * torch.randn(n_samples, 2)
@@ -42,6 +64,16 @@ def generate_circle(n_samples=1000, noise=0):
 
 @st.cache_data
 def generate_heart(n_samples=1000, noise=0):
+                """
+    Generates a 2D heart dataset.
+
+    Args:
+        n_samples (int): The number of samples to generate (default: 1000).
+        noise (float): The amount of noise to add to the spiral (default: 0).
+
+    Returns:
+        torch.Tensor: A tensor of shape (n_samples, 2) containing the 2D circle dataset.
+    """
     t = torch.linspace(-math.pi, math.pi, n_samples)
     x = torch.stack([16 * torch.sin(t) ** 3, 13 * torch.cos(t) - 5 * torch.cos(2*t) - 2 * torch.cos(3*t) - torch.cos(4*t)], dim=1) / 20
     x += noise * torch.randn(n_samples, 2)
@@ -50,17 +82,64 @@ def generate_heart(n_samples=1000, noise=0):
 
 
 class ODE(nn.Module):
+        """
+    Implements a neural network that solves an ordinary differential equation (ODE).
+    
+    Args:
+        dim (int): The number of dimensions in the input data.
+        
+    Attributes:
+        func (ODEFunc): The ODE function that will be used to solve the differential equation.
+        
+    Methods:
+        forward(x): Solves the ODE for the input data x.
+        
+    """
     def __init__(self, dim):
+                """
+        Initializes the ODE network.
+        
+        Args:
+            dim (int): The number of dimensions in the input data.
+        """
         super(ODE, self).__init__()
         self.func = ODEFunc(dim)
 
     def forward(self, x):
+                """
+        Solves the ODE for the input data x.
+        
+        Args:
+            x (torch.Tensor): The input data.
+        
+        Returns:
+            torch.Tensor: The solution to the ODE.
+        """
         t = torch.linspace(0, 1, 2) #integration time
         out = odeint(self.func, x, t)
         return out[1]
 
 class ODEFunc(nn.Module):
+        """
+    Implements the ODE function used to solve the differential equation.
+    
+    Args:
+        dim (int): The number of dimensions in the input data.
+        
+    Attributes:
+        net (nn.Sequential): The neural network used to solve the ODE.
+        
+    Methods:
+        forward(t, x): Evaluates the ODE function for the given input data.
+        
+    """
     def __init__(self, dim):
+                """
+        Initializes the ODE function.
+        
+        Args:
+            dim (int): The number of dimensions in the input data.
+        """
         super(ODEFunc, self).__init__()
         self.net = nn.Sequential(
             nn.Linear(dim, 64),
@@ -71,6 +150,16 @@ class ODEFunc(nn.Module):
         )
 
     def forward(self, t, x):
+                """
+        Evaluates the ODE function for the given input data.
+        
+        Args:
+            t (torch.Tensor): The time values for which the ODE function should be evaluated.
+            x (torch.Tensor): The input data.
+        
+        Returns:
+            torch.Tensor: The output of the ODE function.
+        """
         return self.net(x)
 
 
