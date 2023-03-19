@@ -201,7 +201,7 @@ def main_spiral_chen():
     col1, col2, col3 = st.columns(3)
     adjoint = col1.checkbox('use adjoint', True)
     niters = col2.number_input('n iters', 30, 5000, 2000, 1)
-    lr = col3.number_input('learning rate', 0.0001, 1, 0.01, 0.0001)
+    lr = col3.number_input('learning rate', 0., 1., 0.01, 0.0001)
 
 
 
@@ -246,37 +246,39 @@ def main_spiral_chen():
     optimizer = optim.Adam(params, lr=lr)
     loss_meter = RunningAverageMeter()
 
-    for itr in range(1, niters + 1):
-        optimizer.zero_grad()
-        # backward in time to infer q(z_0)
-        h = rec.initHidden().to(device)
-        for t in reversed(range(samp_trajs.size(1))):
-            obs = samp_trajs[:, t, :]
-            out, h = rec.forward(obs, h)
-        qz0_mean, qz0_logvar = out[:, :latent_dim], out[:, latent_dim:]
-        epsilon = torch.randn(qz0_mean.size()).to(device)
-        z0 = epsilon * torch.exp(.5 * qz0_logvar) + qz0_mean
+    with st.empty() :
+        for itr in range(1, niters + 1):
+            optimizer.zero_grad()
+            # backward in time to infer q(z_0)
+            h = rec.initHidden().to(device)
+            for t in reversed(range(samp_trajs.size(1))):
+                obs = samp_trajs[:, t, :]
+                out, h = rec.forward(obs, h)
+            qz0_mean, qz0_logvar = out[:, :latent_dim], out[:, latent_dim:]
+            epsilon = torch.randn(qz0_mean.size()).to(device)
+            z0 = epsilon * torch.exp(.5 * qz0_logvar) + qz0_mean
 
-        # forward in time and solve ode for reconstructions
-        pred_z = odeint(func, z0, samp_ts).permute(1, 0, 2)
-        pred_x = dec(pred_z)
+            # forward in time and solve ode for reconstructions
+            pred_z = odeint(func, z0, samp_ts).permute(1, 0, 2)
+            pred_x = dec(pred_z)
 
-        # compute loss
-        noise_std_ = torch.zeros(pred_x.size()).to(device) + noise_std
-        noise_logvar = 2. * torch.log(noise_std_).to(device)
-        logpx = log_normal_pdf(
-            samp_trajs, pred_x, noise_logvar).sum(-1).sum(-1)
-        pz0_mean = pz0_logvar = torch.zeros(z0.size()).to(device)
-        analytic_kl = normal_kl(qz0_mean, qz0_logvar,
-                                pz0_mean, pz0_logvar).sum(-1)
-        loss = torch.mean(-logpx + analytic_kl, dim=0)
-        loss.backward()
-        optimizer.step()
-        loss_meter.update(loss.item())
+            # compute loss
+            noise_std_ = torch.zeros(pred_x.size()).to(device) + noise_std
+            noise_logvar = 2. * torch.log(noise_std_).to(device)
+            logpx = log_normal_pdf(
+                samp_trajs, pred_x, noise_logvar).sum(-1).sum(-1)
+            pz0_mean = pz0_logvar = torch.zeros(z0.size()).to(device)
+            analytic_kl = normal_kl(qz0_mean, qz0_logvar,
+                                    pz0_mean, pz0_logvar).sum(-1)
+            loss = torch.mean(-logpx + analytic_kl, dim=0)
+            loss.backward()
+            optimizer.step()
+            loss_meter.update(loss.item())
 
-        print('Iter: {}, running avg elbo: {:.4f}'.format(itr, -loss_meter.avg))
+            st.write('Iter: {}, running avg elbo: {:.4f}'.format(itr, -loss_meter.avg))
 
-    print('Training complete after {} iters.'.format(itr))
+        st.write('Training complete after {} iters.'.format(itr))
+
 
     with torch.no_grad():
         # sample from trajectorys' approx. posterior
