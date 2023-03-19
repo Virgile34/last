@@ -164,8 +164,22 @@ class ODEFunc(nn.Module):
 
 
 
-class ResBlock(nn.Module):#We are defining a simple residual block
+class ResBlock(nn.Module):
+        """
+    Defines a simple residual block.
+
+    Args:
+        dim (int): The input and output dimension of the block.
+
+    Attributes:
+        net (nn.Sequential): The feedforward neural network defining the residual block.
+
+    Methods:
+        forward(x): Computes the forward pass of the block.
+
+    """
     def __init__(self, dim):
+
         super(ResBlock, self).__init__()
         self.net = nn.Sequential(
             nn.Linear(dim, 64),
@@ -174,10 +188,33 @@ class ResBlock(nn.Module):#We are defining a simple residual block
         )
 
     def forward(self, x):
+                        """
+        Computes the forward pass of the residual block.
+
+        Args:
+            x (torch.Tensor): The input tensor of shape (batch_size, dim).
+
+        Returns:
+            torch.Tensor: The output tensor of the block of shape (batch_size, dim).
+
+        """
         return self.net(x) + x
 
 
 class ResNet(nn.Module):
+            """
+    Defines a simple feedforward neural network with residual connections.
+
+    Args:
+        dim (int): The input and output dimension of the network.
+
+    Attributes:
+        net (nn.Sequential): The feedforward neural network with residual connections.
+
+    Methods:
+        forward(x): Computes the forward pass of the network.
+
+    """
     def __init__(self, dim):
         super(ResNet, self).__init__()
         self.net = nn.Sequential(
@@ -190,6 +227,16 @@ class ResNet(nn.Module):
         )
 
     def forward(self, x):
+                """
+        Computes the forward pass of the residual neural network.
+
+        Args:
+            x (torch.Tensor): The input tensor of shape (batch_size, dim).
+
+        Returns:
+            torch.Tensor: The output tensor of the network of shape (batch_size, dim).
+
+        """
         return self.net(x)
 
 
