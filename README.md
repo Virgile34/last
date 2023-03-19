@@ -27,4 +27,4 @@ This application was created using the torchdiffeq library and Streamlit.
 ## License
 This project is licensed under the MIT License - see the LICENSE.md file for details.
 
-##Authors: Virgile Bertrand, Malkiel Riveline
+## Authors: Virgile Bertrand, Malkiel Riveline
