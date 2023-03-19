@@ -6,7 +6,6 @@ import numpy as np
 import numpy.random as npr
 import matplotlib
 
-matplotlib.use('agg')
 
 import matplotlib.pyplot as plt
 import torch
@@ -34,7 +33,7 @@ def generate_spiral2d(nspiral=1000,
                       noise_std=.1,
                       a=0.,
                       b=1.,
-                      savefig=True):
+                      savefig=False):
     """Parametric formula for 2d spiral is `r = a + b * theta`.
 
     Args:
