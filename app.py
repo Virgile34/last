@@ -21,7 +21,7 @@ if __name__ == "__main__" :
         "SIR": func_SIR,
         "Shape": main_spirale,
         "Spiral R.T.Q.Chen":main_spiral_chen,
-        "Boucing Ball": app_bouncing_ball
+        "Bouncing Ball": app_bouncing_ball
     }
 
     demo_name = st.sidebar.selectbox("Choose a mode", page_names_to_funcs.keys())

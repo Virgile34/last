@@ -103,7 +103,7 @@ def generate_spiral2d(nspiral=1000,
 
 
 class LatentODEfunc(nn.Module):
-  """ 
+    """ 
 LatentODEfunc: 
     This module defines the neural network architecture for the latent ODE function that learns the dynamics of the system. The forward function takes as input the time and the current state of the system, and outputs the derivative of the state with respect to time. The architecture consists of three fully connected layers with ELU activation function.
 
@@ -120,7 +120,7 @@ LatentODEfunc:
 
     Methods:
         forward(t, x): Computes the derivative of the state with respect to time, given the time and the current state of the system.
-"""
+    """
 
     def __init__(self, latent_dim=4, nhidden=20):
         super(LatentODEfunc, self).__init__()
@@ -141,7 +141,7 @@ LatentODEfunc:
 
 
 class RecognitionRNN(nn.Module):
-  """RecognitionRNN:
+    """RecognitionRNN:
     This module defines the neural network architecture for the recognition model that infers the latent state from the observed data. The forward function takes as input the observed data and the hidden state, and outputs the mean and variance of the posterior distribution over the latent state. The architecture consists of two fully connected layers with tanh activation function.
 
     Parameters:
@@ -178,7 +178,7 @@ class RecognitionRNN(nn.Module):
 
 
 class Decoder(nn.Module):
-      """
+    """
     A neural network decoder module.
 
     Args:
@@ -235,7 +235,7 @@ class RunningAverageMeter(object):
 
 
 def log_normal_pdf(x, mean, logvar):
-  """
+    """
     Computes the log pdf of a normal distribution with mean `mean` and log variance `logvar` at the point `x`.
 
     Args:
@@ -252,7 +252,7 @@ def log_normal_pdf(x, mean, logvar):
 
 
 def normal_kl(mu1, lv1, mu2, lv2):
-  """
+    """
     Computes the KL divergence between two normal distributions with means `mu1` and `mu2` and log variances `lv1` and `lv2`.
 
     Args:
@@ -277,7 +277,7 @@ def normal_kl(mu1, lv1, mu2, lv2):
 
 
 def main_spiral_chen(): 
-      """Trains a Latent Ordinary Differential Equation model on a toy spiral dataset and visualizes the learned trajectory.
+    """Trains a Latent Ordinary Differential Equation model on a toy spiral dataset and visualizes the learned trajectory.
 
     The model consists of a LatentODEfunc, RecognitionRNN, and Decoder. The training procedure involves
     infering the initial distribution of the latent space by moving backwards in time through the RecognitionRNN,

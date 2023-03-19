@@ -12,7 +12,7 @@ import numpy as np
 
 @st.cache_data
 def generate_spiral(n_samples=10000, noise=0.1, irregularity=0.05, circles=3):
-        """
+    """
     Generates a 2D spiral dataset.
 
     Args:
@@ -47,7 +47,7 @@ def generate_spiral3(n_samples=1000, noise=0.1, irregularity=0.05, circles=10):
 
 @st.cache_data
 def generate_circle(n_samples=1000, noise=0):
-            """
+    """
     Generates a 2D circle dataset.
 
     Args:
@@ -64,7 +64,7 @@ def generate_circle(n_samples=1000, noise=0):
 
 @st.cache_data
 def generate_heart(n_samples=1000, noise=0):
-                """
+    """
     Generates a 2D heart dataset.
 
     Args:
@@ -82,7 +82,7 @@ def generate_heart(n_samples=1000, noise=0):
 
 
 class ODE(nn.Module):
-        """
+    """
     Implements a neural network that solves an ordinary differential equation (ODE).
     
     Args:
@@ -96,7 +96,7 @@ class ODE(nn.Module):
         
     """
     def __init__(self, dim):
-                """
+        """
         Initializes the ODE network.
         
         Args:
@@ -106,7 +106,7 @@ class ODE(nn.Module):
         self.func = ODEFunc(dim)
 
     def forward(self, x):
-                """
+        """
         Solves the ODE for the input data x.
         
         Args:
@@ -120,7 +120,7 @@ class ODE(nn.Module):
         return out[1]
 
 class ODEFunc(nn.Module):
-        """
+    """
     Implements the ODE function used to solve the differential equation.
     
     Args:
@@ -134,7 +134,7 @@ class ODEFunc(nn.Module):
         
     """
     def __init__(self, dim):
-                """
+        """
         Initializes the ODE function.
         
         Args:
@@ -150,7 +150,7 @@ class ODEFunc(nn.Module):
         )
 
     def forward(self, t, x):
-                """
+        """
         Evaluates the ODE function for the given input data.
         
         Args:
@@ -165,7 +165,7 @@ class ODEFunc(nn.Module):
 
 
 class ResBlock(nn.Module):
-        """
+    """
     Defines a simple residual block.
 
     Args:
@@ -188,7 +188,7 @@ class ResBlock(nn.Module):
         )
 
     def forward(self, x):
-                        """
+        """
         Computes the forward pass of the residual block.
 
         Args:
@@ -202,7 +202,7 @@ class ResBlock(nn.Module):
 
 
 class ResNet(nn.Module):
-            """
+    """
     Defines a simple feedforward neural network with residual connections.
 
     Args:
@@ -227,7 +227,7 @@ class ResNet(nn.Module):
         )
 
     def forward(self, x):
-                """
+        """
         Computes the forward pass of the residual neural network.
 
         Args:
@@ -242,7 +242,7 @@ class ResNet(nn.Module):
 
 # Define training loop
 def train_model(model, train_data, val_data, optimizer, n_epochs=100):
-            """
+    """
     Train a PyTorch model using the mean squared error (MSE) loss.
 
     Args:

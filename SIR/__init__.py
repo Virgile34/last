@@ -15,7 +15,7 @@ from .data_manager import get_model, save_model
 
 
 def func_SIR():
-     """
+    """
     This function generates a SIR model with a Neural ODE, allowing the user to choose the parameters for the model and the architecture used for the latent ODE.
     The user can select the parameters of the SIR model, as well as the number of evolutions used for training.
     The function also visualizes the generated data and allows the user to choose the model parameters for the neural ODE.
