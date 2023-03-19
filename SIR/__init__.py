@@ -8,22 +8,16 @@ import pandas as pd
 
 
 from .utils import get_SIR_data, vizualise_data, layer_config
-from .model import SIR_NeuralODE, DataSIR, train, test
+from .model import DataSIR, train, test
 from .data_manager import get_model, save_model
 
 
 
 
 def func_SIR():
-    # if not 'first_call_SIR' in st.session_state :
-    #     st.session_state['first_call_SIR'] = True
-    # else : 
-    #     st.session_state['first_call_SIR'] = False
-
-
-
     st.markdown("# SIR model")
     st.write("This app try to fit the evolution of a SIR model with a Neural ODE")
+
     # parameters for SIR data generation
     with st.expander("SIR data parameters") :
 
@@ -46,8 +40,10 @@ def func_SIR():
         noise_std = col_noiseStd.number_input("Noise std", 0., 1., 0.0, 0.001, format="%.3g")
         train_size = col_train_size.number_input("train size ", 1, 1000, 1, 1, help="use 'train size' number of complete (noised) evolutions of the S, I, R populations")
 
+
     # getting data with those paramerters
-    n_data_per_day=10
+
+    n_data_per_day=10 #nb de points par jour
     t, evol_ODE, data_in = get_SIR_data(S0, I0, R0, beta, gamma, n_days, noise_std, train_size+1, n_data_per_day)
     data_train_in, data_test_in = data_in[:-1], data_in[-1]
 
@@ -57,8 +53,6 @@ def func_SIR():
 
 
 
-
-    
     # parameters for the neural ODE param
     with st.expander("model parameters") :
         st.markdown("Where you can choose the parameters for the model and the architecture uses for the latent ODE")
@@ -109,6 +103,7 @@ def func_SIR():
                 layers.append(nn.Linear(in_size, 3))
 
             latent_ODE_net = nn.Sequential(*layers)
+
 
     st.write("latent ODE model :")
     st.code(latent_ODE_net)
@@ -174,17 +169,11 @@ def func_SIR():
 
 
     if st.button('Update prediction'):
-    
-
-
         step = by_step if not by_all else 'all'              
 
         test_loader = DataLoader(DataSIR(data_test_in, 10, t0_test, tf_test, step))
         loss, preds = test(test_loader, model, loss_fn_name)
 
-
-        # st.code(preds.shape)
-        # st.code(preds)
         if by_all :
             preds = preds[0]
             idx_t0 = t0_test * n_data_per_day + 1

@@ -55,7 +55,7 @@ class ODE(nn.Module):
         self.func = ODEFunc(dim)
 
     def forward(self, x):
-        t = torch.linspace(0, 1, 2)
+        t = torch.linspace(0, 1, 2) #integration time
         out = odeint(self.func, x, t)
         return out[1]
 
@@ -127,6 +127,7 @@ def train_model(model, train_data, val_data, optimizer, n_epochs=100):
 def main_spirale():
     st.title("Shape Fitting with Neural ODEs")
     st.write("This app generates shapes using Neural ODEs. Choose the shape, with the noise and (the best visualization of spiral comes with noise=0 and irregularities=0.1). You'll also have to count five to ten minutes to train the Neural ODEs.")
+    st.write("However, we included the code R.T.Q. Chen for a better generalisation of the fit.")
 # Generate a new shape
     st.sidebar.subheader("Generate a new shape")
     shape_type = st.sidebar.selectbox("Select a shape type", ["Spiral","Big Spiral", "Circle", "Heart", "Spiral with varying curves"])
@@ -145,7 +146,7 @@ def main_spirale():
 
     fig, ax = plt.subplots()
 
-    ax.scatter(shape[:, 0], shape[:, 1])
+    ax.scatter(shape[:, 0], shape[:, 1], s=0.2)
     ax.set_aspect("equal")
     st.write("Generated shape")
     st.pyplot(fig)
@@ -158,7 +159,7 @@ def main_spirale():
     if model_type == "Neural ODE":
         model = ODE(dim=2)
         optimizer = optim.Adam(model.parameters(), lr=learning_rate)
-        train_loss, val_loss = train_model(model, train_data, val_data, optimizer, n_epochs=30)
+        train_loss, val_loss = train_model(model, train_data, val_data, optimizer, n_epochs=100)
         fig, ax = plt.subplots()
         ax.plot(train_loss, label="Train Loss")
         ax.plot(val_loss, label="Validation Loss")
@@ -195,34 +196,59 @@ def main_spirale():
 
 # Generate a new shape using the trained model
     st.sidebar.subheader("Generate a new shape using the trained model")
-    # num_points = st.sidebar.slider("Number of points", 100, 1000, 500, 100)
-    num_points = 1000
-    t = torch.linspace(0, 2 * np.pi, num_points)
+    num_points = 10000
     if model_type == "Neural ODE":
         xs = torch.zeros((num_points, 2))
-        xs[0] = torch.tensor([0., 1.])
+        xs[0] = torch.tensor([0.1, 1.])
+
+        with torch.no_grad() :
+            for i in range(1, num_points) :
+                x_out = model(xs[i-1])
+                xs[i] = x_out
+ 
+
+
+        fig, ax = plt.subplots()
+        ax.scatter(xs[:, 0], xs[:, 1], s=0.2)
+        ax.scatter(shape[:, 0], shape[:, 1], label="True", s=0.2)
+        ax.set_aspect("equal")
+        ax.legend()
+
+        st.pyplot(fig)
+    elif model_type == "ResNet":
+        xs = torch.zeros((num_points, 2))
+        xs[0] = torch.tensor([0.1, 0.])
         with torch.no_grad() :
             for i in range(1, num_points) :
                 x_out = model(xs[i-1])
                 xs[i] = x_out
 
         fig, ax = plt.subplots()
-        ax.scatter(xs[:, 0], xs[:, 1])
+        ax.scatter(xs[:, 0], xs[:, 1], s=0.2)
+        ax.scatter(shape[:, 0], shape[:, 1], label="True", s=0.2)
         ax.set_aspect("equal")
+        ax.legend()
 
         st.pyplot(fig)
-    elif model_type == "ResNet":
-        x = model(t)    
-        fig, ax = plt.subplots()
-        ax.scatter(x[:, 0], x[:, 1])
-        ax.set_aspect("equal")
-        st.pyplot(fig)
+
     else:   
-        x1 = odeint(model1, torch.tensor([0.1, 0.0]), t)
-        x2 = model2(t)    
+        x1s = torch.zeros((num_points, 2))
+        x2s = torch.zeros((num_points, 2))
+        x1s[0] = torch.tensor([0.1, 0.])
+        x2s[0] = torch.tensor([0.1, 0.])
+
+        with torch.no_grad() :
+            for i in range(1, num_points) :
+                x1_out = model1(x1s[i-1])
+                x1s[i] = x1_out                
+                
+                x2_out = model2(x2s[i-1])
+                x2s[i] = x2_out
+ 
         fig, ax = plt.subplots()
-        ax.scatter(x1[:, 0], x1[:, 1], label="Neural ODE")
-        ax.scatter(x2[:, 0], x2[:, 1], label="ResNet")
+        ax.scatter(x1s[:, 0], x1s[:, 1], label="Neural ODE", s=0.2)
+        ax.scatter(x2s[:, 0], x2s[:, 1], label="ResNet", s=0.2)
+        ax.scatter(shape[:, 0], shape[:, 1], label="True", s=0.2)
         ax.set_aspect("equal")
         ax.legend()
         st.pyplot(fig)

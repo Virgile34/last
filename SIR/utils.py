@@ -61,7 +61,6 @@ def vizualise_data(t, evol_SIR, data, idx_t0=0, idx_tf=-1, name_data='not specif
 
     ax.set_xlabel("Time (days)")
     ax.set_ylabel("population (%)")
-    ax.legend()
 
     return fig
 
