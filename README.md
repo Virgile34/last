@@ -18,7 +18,7 @@ To use the application, follow these steps:
 
 2. Run the app by typing `streamlit run app.py` in your terminal.
 
-3. Once the app is running, you can create and modify shapes using the interface. Adjust the physical properties and observe how the shape responds over time.
+3. Once the app is running, you can create and modify shapes using the interface.
 
 ## Acknowledgements
 
