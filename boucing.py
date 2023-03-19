@@ -9,7 +9,14 @@ from torchdiffeq import odeint_event
 
 torch.set_default_dtype(torch.float64)
 
-
+"""The BouncingBallExample class is a PyTorch nn.Module that implements a bouncing ball simulation. 
+The class takes in several parameters such as radius, gravity, and adjoint, and initializes them as parameters for the neural network model. 
+The forward function takes in a t and state argument, where state is a tuple of pos, vel, and log_radius, representing the position, velocity, and log of the radius of the ball, 
+respectively. The function returns the derivative of pos, vel, and log_radius. The event_fn function determines the collision event between the ball and the ground and returns a positive
+value if the ball is in mid-air and negative if the ball is on the ground. The get_initial_state function returns the initial state of the simulation. 
+The state_update function updates the state based on an event (collision). The get_collision_times function returns the time at which a collision occurs. 
+The simulate function runs the bouncing ball simulation and returns the times, trajectory, velocity, and event times of the simulation. 
+The gradcheck function checks the gradient of the simulation. Finally, the app_bouncing_ball function initializes the simulation with default parameters and runs the simulation on Streamlit."""
 class BouncingBallExample(nn.Module):
     def __init__(self, radius=0.2, gravity=9.8, adjoint=False):
         super().__init__()
