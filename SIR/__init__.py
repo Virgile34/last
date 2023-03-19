@@ -15,6 +15,14 @@ from .data_manager import get_model, save_model
 
 
 def func_SIR():
+     """
+    This function generates a SIR model with a Neural ODE, allowing the user to choose the parameters for the model and the architecture used for the latent ODE.
+    The user can select the parameters of the SIR model, as well as the number of evolutions used for training.
+    The function also visualizes the generated data and allows the user to choose the model parameters for the neural ODE.
+    
+    Returns:
+    None
+    """
     st.markdown("# SIR model")
     st.write("This app try to fit the evolution of a SIR model with a Neural ODE")
 
@@ -41,7 +49,7 @@ def func_SIR():
         train_size = col_train_size.number_input("train size ", 1, 1000, 1, 1, help="use 'train size' number of complete (noised) evolutions of the S, I, R populations")
 
 
-    # getting data with those paramerters
+    # getting data with those parameters
 
     n_data_per_day=10 #nb de points par jour
     t, evol_ODE, data_in = get_SIR_data(S0, I0, R0, beta, gamma, n_days, noise_std, train_size+1, n_data_per_day)
