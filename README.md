@@ -12,11 +12,18 @@ The Shape application allows users to compare the fit of a Neural ODE to a ResNe
 The SIR Model application simulates the spread of a disease through a population using the Susceptible-Infectious-Recovered (SIR) model. Users can observe how the disease spreads over time.
 
 # Installation
-To install the necessary modules for the proper functioning of the application, run the following command in your terminal or command prompt:
-pip install -r requirements.txt
-#Usage
-To run the application, execute the following command in your terminal or command prompt at the root of the project:
-streamlit run app.py
-The application will automatically open in your default browser.
+To use the application, follow these steps:
 
-#Authors: Virgile Bertrand, Malkiel Riveline
+1. Install the necessary modules using `pip install -r requirements.txt`.
+
+2. Run the app by typing `streamlit run app.py` in your terminal.
+
+3. Once the app is running, you can create and modify shapes using the interface. Adjust the physical properties and observe how the shape responds over time.
+
+## Acknowledgements
+
+This application was created using the torchdiffeq library and Streamlit. 
+
+## License
+This project is licensed under the MIT License - see the LICENSE.md file for details.
+##Authors: Virgile Bertrand, Malkiel Riveline
