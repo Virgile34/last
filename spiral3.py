@@ -7,7 +7,7 @@ import math
 import matplotlib.pyplot as plt
 import numpy as np
 
-
+#This is our code for the Shape module. 
 # Define functions to generate different shapes
 
 @st.cache_data
