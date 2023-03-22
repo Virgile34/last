@@ -6,7 +6,7 @@ from torchdiffeq import odeint
 import matplotlib.pyplot as plt
 from torchdiffeq import odeint, odeint_adjoint
 from torchdiffeq import odeint_event
-
+#Most of the code is from RTQ CHEN ([4])- docstrings and the transposition to streamlit is from us. We wanted to include this example in our app since the physic application is quite nice.
 torch.set_default_dtype(torch.float64)
 
 """The BouncingBallExample class is a PyTorch nn.Module that implements a bouncing ball simulation. 
