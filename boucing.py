@@ -18,7 +18,40 @@ The state_update function updates the state based on an event (collision). The g
 The simulate function runs the bouncing ball simulation and returns the times, trajectory, velocity, and event times of the simulation. 
 The gradcheck function checks the gradient of the simulation. Finally, the app_bouncing_ball function initializes the simulation with default parameters and runs the simulation on Streamlit."""
 class BouncingBallExample(nn.Module):
+    """
+    A PyTorch module that implements a bouncing ball simulation.
+
+    Args:
+        radius (float): The radius of the ball. Default: 0.2.
+        gravity (float): The acceleration due to gravity. Default: 9.8.
+        adjoint (bool): Whether to use the adjoint method for solving the ODE. Default: False.
+
+    Attributes:
+        gravity (torch.Tensor): The gravity parameter as a PyTorch tensor.
+        log_radius (torch.Tensor): The log of the radius parameter as a PyTorch tensor.
+        t0 (torch.Tensor): The initial time parameter as a PyTorch tensor.
+        init_pos (torch.Tensor): The initial position parameter as a PyTorch tensor.
+        init_vel (torch.Tensor): The initial velocity parameter as a PyTorch tensor.
+        absorption (torch.Tensor): The absorption parameter as a PyTorch tensor.
+        odeint (function): The ODE solver function to use.
+
+    Methods:
+        forward(t, state): Computes the derivative of pos, vel, and log_radius at time t for a given state.
+        event_fn(t, state): Determines the collision event between the ball and the ground.
+        get_initial_state(): Returns the initial state of the simulation.
+        state_update(state): Updates the state based on an event (collision).
+        get_collision_times(nbounces=1): Returns the time at which a collision occurs.
+        simulate(nbounces=1): Runs the bouncing ball simulation and returns the times, trajectory, velocity, and event times of the simulation.
+    """
     def __init__(self, radius=0.2, gravity=9.8, adjoint=False):
+        """
+        Initializes the BouncingBallExample object.
+
+        Args:
+            radius (float, optional): The radius of the ball. Default is 0.2.
+            gravity (float, optional): The acceleration due to gravity. Default is 9.8.
+            adjoint (bool, optional): Whether to use adjoint method for ODE integration. Default is False.
+        """
         super().__init__()
         self.gravity = nn.Parameter(torch.as_tensor([gravity]))
         self.log_radius = nn.Parameter(torch.log(torch.as_tensor([radius])))
@@ -29,22 +62,56 @@ class BouncingBallExample(nn.Module):
         self.odeint = odeint_adjoint if adjoint else odeint
 
     def forward(self, t, state):
+        """
+        The forward function of the PyTorch module.
+
+        Args:
+            t (torch.Tensor): A 1D tensor representing time.
+            state (tuple): A tuple of 3 tensors representing position, velocity, and log(radius).
+
+        Returns:
+            tuple: A tuple of 3 tensors representing the derivatives of position, velocity, and log(radius).
+        """
         pos, vel, log_radius = state
         dpos = vel
         dvel = -self.gravity
         return dpos, dvel, torch.zeros_like(log_radius)
 
     def event_fn(self, t, state):
+        """
+        The event function for detecting collisions.
+
+        Args:
+            t (torch.Tensor): A 1D tensor representing time.
+            state (tuple): A tuple of 3 tensors representing position, velocity, and log(radius).
+
+        Returns:
+            torch.Tensor: A 1D tensor representing the difference between the position and the radius of the ball.
+        """
         # positive if ball in mid-air, negative if ball within ground.
         pos, _, log_radius = state
         return pos - torch.exp(log_radius)
 
     def get_initial_state(self):
+        """
+        Returns the initial state of the bouncing ball system.
+
+        Returns:
+            tuple: A tuple of a scalar tensor representing the start time and a tuple of 3 tensors representing 
+            the initial position, velocity, and log(radius) of the ball.
+        """
         state = (self.init_pos, self.init_vel, self.log_radius)
         return self.t0, state
 
     def state_update(self, state):
-        """Updates state based on an event (collision)."""
+        """
+        Updates the state of the bouncing ball system after a collision.
+
+        Args:
+            state (tuple): A tuple of 3 tensors representing position, velocity, and log(radius).
+
+        Returns:
+            tuple: A tuple of 3 tensors representing the updated position, velocity, and log(radius)."""
         pos, vel, log_radius = state
         pos = (
             pos + 1e-7
@@ -53,6 +120,16 @@ class BouncingBallExample(nn.Module):
         return (pos, vel, log_radius)
 
     def get_collision_times(self, nbounces=1):
+        """
+        Computes the times at which the ball collides with the ground.
+
+        Args:
+        nbounces (int, optional): The number of bounces to simulate. Defaults to 1.
+
+        Returns:
+        
+        List[torch.Tensor]: A list of length `nbounces` containing the time of each bounce.
+         """
 
         event_times = []
 
@@ -77,6 +154,18 @@ class BouncingBallExample(nn.Module):
         return event_times
 
     def simulate(self, nbounces=1):
+        """
+        Simulate the motion of the bouncing ball for a given number of bounces.
+
+        Args:
+            nbounces (int): Number of bounces to simulate.
+
+        Returns:
+            tuple: A tuple containing four tensors: (1) times, a 1D tensor containing the timestamps for each time step
+                of the simulation; (2) trajectory, a 1D tensor containing the positions of the ball at each time step;
+                (3) velocity, a 1D tensor containing the velocity of the ball at each time step; and (4) event_times, a
+                1D tensor containing the timestamps for each collision event (i.e., when the ball hits the ground).
+        """
         event_times = self.get_collision_times(nbounces)
 
         # get dense path
@@ -106,6 +195,18 @@ class BouncingBallExample(nn.Module):
         )
     
 def gradcheck(nbounces):
+    """Perform a gradient check on the BouncingBallExample class.
+
+    Args:
+        nbounces (int): The number of bounces to simulate.
+
+    Raises:
+        Exception: If the gradient check fails.
+
+    Returns:
+        None
+
+    """
 
     system = BouncingBallExample()
 
@@ -159,6 +260,15 @@ system=BouncingBallExample()
 
 
 def app_bouncing_ball():
+    """
+    Displays a simple example of a fit of a theoretical bouncing ball. This demonstration is from R.T.Q CHEN (see [4]).
+    The function takes no arguments but prompts the user to select the number of bounces to simulate using a slider. 
+    It then calls the `simulate` function from the `system` module to simulate the bouncing ball, and plots the results
+    using `matplotlib`. Finally, the plot is displayed using `streamlit`'s `pyplot` method.
+
+    Returns:
+        None
+    """
     # st.set_page_config(page_title="Bouncing Ball Simulation")
     st.write("Here is a simple example of a fit of a theoretical bouncing ball. This demonstration is from R.T.Q CHEN (see [4]).")
 
