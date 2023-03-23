@@ -40,6 +40,27 @@ def get_SIR_data(S0, I0, R0, beta, gamma, n_days, noise_std, size, n_data_per_da
 
 
 def vizualise_data(t, evol_SIR, data, idx_t0=0, idx_tf=-1, name_data='not specified') :
+    """
+    Parameters
+    ----------
+    t : np.ndarray (10*n_days, )
+        Array of time points for the SIR model evolution
+    evol_SIR : np.ndarray (10*n_days, 3)
+        Array of the evolution of the SIR model from ODE integration
+    data : np.ndarray (size, 10*n-days, 3)
+        Array of `size` noised evolutions of the SIR model
+    idx_t0 : int
+        Index of the start time for data visualization
+    idx_tf : int
+        Index of the final time for data visualization
+    name_data : str
+        Name of the data to be displayed
+        
+    Returns
+    -------
+    fig : matplotlib.figure.Figure
+        Matplotlib figure containing the visualization
+    """
     if idx_tf == -1 : idx_tf = len(t)
 
     fig, ax = plt.subplots(1, 1)
@@ -65,6 +86,21 @@ def vizualise_data(t, evol_SIR, data, idx_t0=0, idx_tf=-1, name_data='not specif
     return fig
 
 def layer_config(num, in_size) :
+    """
+    Parameters
+    ----------
+    num : int
+        Index of the layer
+    in_size : int
+        Size of the input to the layer
+        
+    Returns
+    -------
+    layer : torch.nn.Module
+        PyTorch layer created according to user specifications
+    out_size : int
+        Size of the output of the layer
+    """
     st.markdown("---")
     st.markdown("- Layer " + str(num))
     col1, col2 = st.columns(2)
